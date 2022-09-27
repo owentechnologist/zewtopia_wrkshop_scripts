@@ -1,9 +1,19 @@
 import redis
 from redis.client import Pipeline
 
-# establish connection to your Redis instance:
-myredis = redis.Redis( host='192.168.1.20', port=12000, decode_responses=True)
-#myredis = redis.Redis( host='allindb.centralus.redisenterprise.cache.azure.net', port=10000, password='I4NCGKKUFmd6+VraDKrAOJrIF8TuN4bSsN+P2+2M96E=')
+#Edit these values to match your Redis Endpoint:
+redis_host='192.168.1.20'
+redis_port=12000
+
+## This example expects that you have executed the LUA scripts from zew_purchases_stream_event_creator_lua.md
+## This example shows a worker in a workergroup processing RedisStream events and turning them into Hashes
+## The resulting hashes are then indexed By RediSearch and queried
+## run this program by executing:
+## python3 zewtopia_stream_and_search_test.py
+
+
+# Establish the connection to your Redis instance:
+myredis = redis.Redis( host=redis_host, port=redis_port, decode_responses=True)
 
 # Establish a Search index (we will query this a bit later)
 try:
@@ -17,7 +27,7 @@ except redis.exceptions.ResponseError as err:
     print(f'FT.CREATE ... {err} continuing on...')
 
 # establish python-based stream workergroup:
-# this group starts procesing at the beginning of the stream
+# this group starts processing at the beginning of the stream:
 try:
     #myredis.xgroup_destroy('zew:{batch2}:revenue:stream','group1')
     myredis.xgroup_create('zew:{batch2}:revenue:stream','group1','0-0')
@@ -54,7 +64,17 @@ sresult = myredis.execute_command(
 "LIMIT", "0", "100"
 )
 
-# display results to user:
-print('\n Query Results - total dollar value by item sold:')
 for c in range(len(sresult)):
     print(sresult[c])
+
+qstring = ''' "FT.AGGREGATE" "idx_zew_revenue"
+          "@visitor_purchase_item_cost:[1 80]"
+          "GROUPBY" "1" "@visitor_purchase_item_name"
+          "reduce" "SUM" "1" "@visitor_purchase_item_cost"
+          "AS" "total_earned"
+          "GROUPBY" "2" "@visitor_purchase_item_name" "@total_earned"
+          "SORTBY" "2" "@total_earned" "DESC"
+          "LIMIT" "0" "20" '''
+
+print(f"Above results came from this query: {qstring}")
+print("\n Why not use Redis-cli or RedisInsight to test out some other queries?")
