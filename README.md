@@ -7,6 +7,15 @@ It is expected that you will have a redis-server running with the search and JSO
 
 # Welcome to Zewtopia!  <em>(a very fake zoo)</em>
 
+### Get started by running the scripts found here:
+[populate_zew_animals.lua.md](./populate_zew_animals.lua.md)
+
+### Then you can expand to more data types and Search queries using:
+[populate_additional_zew_entities.lua.md](./populate_additional_zew_entities.lua.md)
+
+### Then you can populate a Redis Stream with purchase events using:
+[zew_purchases_stream_event_creator_lua.md](./zew_purchases_stream_event_creator_lua.md)
+
 ### To run the sample python code you will need to make sure you have python3 and that redis-py is installed in your environment
 ``` 
 pip3 install redis[hiredis]
