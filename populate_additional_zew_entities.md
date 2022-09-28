@@ -66,8 +66,8 @@ FT.AGGREGATE idx_all_zew "@species:{Kan*} @current_gps_location:[117.14803,32.73
 ```
 
 ### Find the tenure category for a bonobo that has 797 days_in_zoo using a range-query: 
-This joins results of the Tenure class for the bonobo with 
+This returns results of the Tenure class for the bonobo with the specified number of days in zoo.  If you include a matching bonobo animal name in the OR clause, that bonobo information will be confirmed (returned) as well. 
 <em>(range-queries like this can be useful when sequential ids or IPAddresses or measures of time can be grouped together)</em>
 ```
-FT.SEARCH idx_all_zew "(@days_in_zoo_start:[-inf 797] @days_in_zoo_end:[ 797 +inf] @species:{Bon*}) | @name:('Chess Rescue 2500') " return 3 days_in_zoo description tenure_class LIMIT 0 2
+FT.SEARCH idx_all_zew "(@days_in_zoo_start:[-inf 797] @days_in_zoo_end:[ 797 +inf] @species:{Bon*}) | @name:('Chess*') " return 3 days_in_zoo description tenure_class LIMIT 0 2
 ```

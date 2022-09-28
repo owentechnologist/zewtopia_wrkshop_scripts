@@ -15,6 +15,10 @@ It is also expected that you have access to a command shell that allows you to r
 ### Then you can expand to more data types and Search queries using:
 [populate_additional_zew_entities.md](./populate_additional_zew_entities.md)
 
+### You can look at some simple JSON data and searches here:
+[add_json_entities_and_search.md](./add_json_entities_and_search.md)
+
+
 ### Then you can populate a Redis Stream with purchase events using:
 [zew_purchases_stream_event_creator_lua.md](./zew_purchases_stream_event_creator_lua.md)
 
