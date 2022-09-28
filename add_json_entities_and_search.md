@@ -1,4 +1,4 @@
-## showing several uses of JSON - adding a search index and examples queries
+## showing several uses of JSON - adding a search index and example queries
 ``` 
 JSON.SET zew:activities:gf $ '{"name": "Gorilla Feeding", "cost": 0.00, "times": ["0800", "1500", "2200"], "days": ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],"location": "Gorilla House South", "responsible-party": {"name": "Duncan Mills", "contact": [{"phone": "715-876-5522"}, {"email": "dmills@zew.org"}]}}'
 ```
