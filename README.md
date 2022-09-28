@@ -16,7 +16,7 @@ It is expected that you will have a redis-server running with the search and JSO
 ### Then you can populate a Redis Stream with purchase events using:
 [zew_purchases_stream_event_creator_lua.md](./zew_purchases_stream_event_creator_lua.md)
 
-### To run the sample python code you will need to make sure you have python3 and that redis-py is installed in your environment
+### To run the sample python code that starts up workers to process stream events and produce searchable Hashes -  you will need to make sure you have python3 and that redis-py is installed in your environment
 ``` 
 pip3 install redis[hiredis]
 ```
