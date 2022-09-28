@@ -19,7 +19,21 @@ EVAL "do redis.call('SADD',KEYS[1],'Giggly') redis.call('SADD',KEYS[1],'Charmer'
 EVAL "for index = 1,3000 do local nums = '123456789' local alphs = redis.call('SRANDMEMBER', KEYS[4])..'aBcDeFgHiJkLmNoPqRsTuVwXyZ' local days = math.random(1,800) redis.call('HSET', KEYS[1] .. index,'species','' ..  redis.call('SRANDMEMBER', KEYS[2]),'name',redis.call('SRANDMEMBER', KEYS[4]) .. ' ' .. redis.call('SRANDMEMBER', KEYS[4]) ..' '.. index ,'gender', index %3 == 0 and 'male' or 'female' ,'known_disorders',index %3 == 0 and 'none reported' or redis.call('SRANDMEMBER', KEYS[3]),'days_in_zoo', days,'current_gps_location', '117.14'..math.random(800,1000).. ',32.73'.. math.random(0,900), 'dob',(redis.call('time')[1]-(days*(86400*math.random(1,8)))),'docid',index ..''.. math.random(1,800)..index .. string.sub(alphs,math.random(3,7),math.random(8,12)) .. math.random(1,800) .. '-41'.. math.random(1,800)..index .. string.sub(nums,math.random(1,4),math.random(5,9)) ..'-b749-'.. math.random(1,800)..index .. string.sub(alphs,math.random(4,9),math.random(10,14))) end" 4 zew:{batch1}:animal: zew:{batch1}:species zew:{batch1}:disorders zew:{batch1}:names
 ```
 
+* Create a search index that will enable redis search queries:
+``` 
+ FT.CREATE idx_zew PREFIX 1 "zew:" SCHEMA name TEXT PHONETIC dm:en species TAG dob NUMERIC SORTABLE gender TAG known_disorders TEXT PHONETIC dm:en days_in_zoo NUMERIC SORTABLE current_gps_location GEO SORTABLE
+```
 
+* Add an alias for the search index to allow for remapping of queries to alternate indexes:
+``` 
+ FT.ALIASADD idxa_zew idx_zew
+```
+
+* Test a simple Search query:
+
+``` 
+FT.search idxa_zew "@name:bloo" return 1 name LIMIT 0 3
+```
 
 ## YOU CAN STOP NOW ##
 
