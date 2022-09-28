@@ -13,7 +13,7 @@ It is also expected that you have access to a command shell that allows you to r
 [populate_zew_animals.lua.md](./populate_zew_animals.lua.md)
 
 ### Then you can expand to more data types and Search queries using:
-[populate_additional_zew_entities.lua.md](./populate_additional_zew_entities.lua.md)
+[populate_additional_zew_entities.md](./populate_additional_zew_entities.md)
 
 ### Then you can populate a Redis Stream with purchase events using:
 [zew_purchases_stream_event_creator_lua.md](./zew_purchases_stream_event_creator_lua.md)
