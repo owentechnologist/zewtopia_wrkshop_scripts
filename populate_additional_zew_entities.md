@@ -1,3 +1,5 @@
+## It is expected that you have already populated Redis with animal Hashes using  
+[populate_zew_animals.lua.md](./populate_zew_animals.lua.md)
 ### The following snippets are examples of redis commands to create data in Redis
 #### Note that you run the example commands inside an active redis-cli shell:
 
