@@ -38,3 +38,5 @@ TS.MRANGE - + FILTER data=tickets isfree=(false,true) GROUPBY isfree REDUCE SUM
 * can you tell whether tickets that are free are more popular than tickets that are not free?
 
 * How would you query the time-series to uncover which of the attractions sells the most tickets?
+
+[link_to_documentation_for_redis_time_series](https://redis.io/commands/?group=timeseries)
