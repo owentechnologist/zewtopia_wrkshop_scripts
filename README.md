@@ -28,3 +28,5 @@ It is also expected that you have access to a command shell that allows you to r
 ``` 
 pip3 install redis[hiredis]
 ```
+### Then you try working with Redis Time-series data for ticket sales over 10 years:
+[ticket_sales_time_series.md](./ticket_sales_time_series.md)
