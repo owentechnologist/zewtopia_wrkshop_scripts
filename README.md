@@ -30,3 +30,6 @@ pip3 install redis[hiredis]
 ```
 ### Then you try working with Redis Time-series data for ticket sales over 10 years:
 [ticket_sales_time_series.md](./ticket_sales_time_series.md)
+
+### Learn about using Redis CuckooFilters for de-duping:
+[deduping_coupon_advertisements.md](./deduping_coupon_advertisements.md)
