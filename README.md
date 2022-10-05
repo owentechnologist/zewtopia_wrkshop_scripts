@@ -18,6 +18,8 @@ It is also expected that you have access to a command shell that allows you to r
 ### You can look at some simple JSON data and searches here:
 [add_json_entities_and_search.md](./add_json_entities_and_search.md)
 
+#### NB: <em> A Jedis/Java based JSON + Search example is available here:</em>
+[https://github.com/owentechnologist/jsonZewSearch](https://github.com/owentechnologist/jsonZewSearch)
 
 ### Then you can populate a Redis Stream with purchase events using:
 [zew_purchases_stream_event_creator_lua.md](./zew_purchases_stream_event_creator_lua.md)
