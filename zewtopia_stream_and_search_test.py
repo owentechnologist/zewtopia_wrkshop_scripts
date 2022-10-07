@@ -17,10 +17,14 @@ myredis = redis.Redis( host=redis_host, port=redis_port, decode_responses=True)
 
 # Establish a Search index (we will query this a bit later)
 try:
+    myredis.execute_command('FT.DROPINDEX','idx_zew_revenue')
+except redis.exceptions.ResponseError as err:
+    print(f'FT.DROPINDEX ... {err} continuing on...')
+try:
     myredis.execute_command(
     'FT.CREATE','idx_zew_revenue',
     'PREFIX','1','zew:revenue:',
-    'SCHEMA','visitor_purchase_item_name','TEXT',
+    'SCHEMA','visitor_purchase_item_name','TAG',
     'visitor_purchase_item_cost','NUMERIC','SORTABLE'
     )
 except redis.exceptions.ResponseError as err:
