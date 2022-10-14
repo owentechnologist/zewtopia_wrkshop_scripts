@@ -18,7 +18,7 @@ It is also expected that you have access to a command shell that allows you to r
 ### You can look at some simple JSON data and searches here:
 [add_json_entities_and_search.md](./add_json_entities_and_search.md)
 
-#### NB: <em> A Jedis/Java based JSON + Search example is available here:</em>
+#### NB: <em> A more involved Jedis/Java based JSON + Search example is available here:</em>
 [https://github.com/owentechnologist/jsonZewSearch](https://github.com/owentechnologist/jsonZewSearch)
 
 ### Then you can populate a Redis Stream with purchase events using:
@@ -28,6 +28,11 @@ It is also expected that you have access to a command shell that allows you to r
 ``` 
 pip3 install redis[hiredis]
 ```
+
+### Then you can configure the host and port etc and execute the example python client found here:
+[python_zewtopia_stream_and_search_test.py](./python_zewtopia_stream_and_search_test.py)
+
+
 ### Then you try working with Redis Time-series data for ticket sales over 10 years:
 [ticket_sales_time_series.md](./ticket_sales_time_series.md)
 

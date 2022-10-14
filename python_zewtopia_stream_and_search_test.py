@@ -1,19 +1,28 @@
-import redis
+import redis, os
 from redis.client import Pipeline
-
-#Edit these values to match your Redis Endpoint:
-redis_host='192.168.1.20'
-redis_port=12000
 
 ## This example expects that you have executed the LUA scripts from zew_purchases_stream_event_creator_lua.md
 ## This example shows a worker in a workergroup processing RedisStream events and turning them into Hashes
 ## The resulting hashes are then indexed By RediSearch and queried
 ## run this program by executing:
-## python3 zewtopia_stream_and_search_test.py
+## python3 python_zewtopia_stream_and_search_test.py
 
+# TODO: fix the host and port to match your redis database endpoint:
 
-# Establish the connection to your Redis instance:
-myredis = redis.Redis( host=redis_host, port=redis_port, decode_responses=True)
+redishost = 'redis-10000.homelab.local'
+redispassword = '' #FIXME (if you are not using default user with no password)
+redisport = 10000
+redisuser = 'default'  #FIXME (if you are not using default user with no password)
+
+# if not using TLS:
+myredis = redis.StrictRedis(redishost,redisport,password=redispassword, charset="utf-8", decode_responses=True)
+
+# if using TLS: #FIXME (match below settings to your environment)
+CERT_DIR = '/tmp/certs'
+SERVER_CERT = os.path.join(CERT_DIR,"redis-client-cert.pem")
+SERVER_KEY = os.path.join(CERT_DIR,"redis-client-key.pem")
+CACERTS = os.path.join(CERT_DIR, "ca.pem")
+#myredis = redis.StrictRedis(redishost,redisport, username=redisuser,password=redispassword, charset="utf-8", decode_responses=True, ssl=True,ssl_certfile=SERVER_CERT,ssl_keyfile=SERVER_KEY,ssl_ca_certs=CACERTS)
 
 # Establish a Search index (we will query this a bit later)
 try:
