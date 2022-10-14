@@ -1,6 +1,6 @@
 ## This repository groups together various code and command examples that are designed to illuminate the  capabilities of Redis
 
-It is expected that you will have a redis database running with the search and JSON modules loaded
+It is expected that you will have a redis database running with the Search, Bloom, Time-series and JSON modules loaded
 
 It is also expected that you have access to a command shell that allows you to run Redis-cli and connect to your redis database.
 
