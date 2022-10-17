@@ -1,4 +1,4 @@
-## showing several uses of JSON - adding a search index and example queries
+## Showing several uses of JSON - adding a search index and example queries
 ``` 
 JSON.SET zew:activities:gf $ '{"name": "Gorilla Feeding", "cost": 0.00, "times": ["0800", "1500", "2200"], "days": ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"],"location": "Gorilla House South", "responsible-party": {"name": "Duncan Mills", "contact": [{"phone": "715-876-5522"}, {"email": "dmills@zew.org"}]}}'
 ```
@@ -22,3 +22,6 @@ FT.SEARCH idx_zew_activities @times:{08*} return 3 $.name $.times $.location
 ``` 
 FT.SEARCH idx_zew_activities @times:{11*} return 2 event_name location
 ```
+
+#### NB: <em> A more involved Jedis/Java based JSON + Search example is available here:</em>
+[https://github.com/owentechnologist/jsonZewSearch](https://github.com/owentechnologist/jsonZewSearch)
