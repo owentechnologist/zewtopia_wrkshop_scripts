@@ -1,34 +1,42 @@
 # Zewtopia Ticket Sales!
-### <em>you will need access to a Redis-TimeSeries Database to work with the following data:</em>
-## Executing the scripts below will populate several time-series keys that track ticket sales over 10 years for various attractions at the zoo
-
+### <em>You will need access to a Redis-TimeSeries Database to work with the following data:</em>
+## Executing the script below will populate several time-series keys that track ticket sales over about 1 year for various attractions at the zoo
+### The ecript below does the following:
 * Cleanup any old keys:
-``` 
-del zew:adult:{tickets}
-del zew:child:{tickets}
-del zew:pettingzoo:{tickets}
-del zew:bonobolecture:{tickets}
-del zew:gorillafeeding:{tickets}
-```
-* Create 5 new keys establishing labels so that they can later be analyzed and filtered and grouped:
-``` 
-TS.CREATE zew:adult:{tickets} retention 0 LABELS data tickets attraction zoo isfree false type adult
-TS.CREATE zew:child:{tickets} retention 0 LABELS data tickets attraction zoo isfree false type child
-TS.CREATE zew:pettingzoo:{tickets} retention 0 LABELS data tickets attraction pettingzoo isfree true type all
-TS.CREATE zew:bonobolecture:{tickets} retention 0 LABELS data tickets attraction bonobolecture isfree false type adult
-TS.CREATE zew:gorillafeeding:{tickets} retention 0 LABELS data tickets attraction gorillafeeding isfree true type all
-```
+* Create several new keys establishing labels so that they can later be analyzed and filtered and grouped:
+* populate the keys with values for roughly 1 year of ticket sales:
 
-* populate the keys with values for 10 years of ticket sales:
+NB: Copy paste the following to a file on your machine and edit the host and port values.You may have to add the redis-ci -a argument for authorization (to allow you to specify a password when connecting)
+
 
 ``` 
-EVAL "for season = 1251784800000,1629525600000,7869600000 do for index = 0,365 do local vall = math.random(1,120) redis.call('TS.ADD', 'zew:adult:{tickets}', ((index*11200000)+season), (vall+1) ) end end" 1 {tickets} 
-EVAL "for season = 1251784800000,1629525600000,7869600000 do for index = 0,365 do local vall = math.random(2,220) redis.call('TS.ADD', 'zew:child:{tickets}', ((index*11200000)+season), (vall+1) ) end end" 1 {tickets} 
-EVAL "for season = 1251784800000,1629525600000,7869600000 do for index = 0,365 do local vall = math.random(1,90) redis.call('TS.ADD', 'zew:pettingzoo:{tickets}', ((index*11200000)+season), (vall+1) ) end end" 1 {tickets} 
-EVAL "for season = 1251784800000,1629525600000,7869600000 do for index = 0,365 do local vall = math.random(1,20) redis.call('TS.ADD', 'zew:bonobolecture:{tickets}', ((index*11200000)+season), (vall+1) ) end end" 1 {tickets} 
-EVAL "for season = 1251784800000,1629525600000,7869600000 do for index = 0,365 do local vall = math.random(30,80) redis.call('TS.ADD', 'zew:gorillafeeding:{tickets}', ((index*11200000)+season), (vall+1) ) end end" 1 {tickets} 
-```
+#!/bin/sh
+host=127.0.0.1
+port=6379
+redis-cli -h $host -p $port del zew:adult:{tickets}
+redis-cli -h $host -p $port del zew:child:{tickets}
+redis-cli -h $host -p $port del zew:pettingzoo:{tickets}
+redis-cli -h $host -p $port del zew:bonobolecture:{tickets}
+redis-cli -h $host -p $port del zew:gorillafeeding:{tickets}
+redis-cli -h $host -p $port del zew:3dmovie:{tickets}
+redis-cli -h $host -p $port del zew:snakefeeding:{tickets}
 
+redis-cli -h $host -p $port TS.CREATE zew:adult:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience adult
+redis-cli -h $host -p $port TS.CREATE zew:child:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience child
+redis-cli -h $host -p $port TS.CREATE zew:pettingzoo:{tickets} retention 0 LABELS data tickets attraction pettingzoo isfree false audience all
+redis-cli -h $host -p $port TS.CREATE zew:bonobolecture:{tickets} retention 0 LABELS data tickets attraction bonobolecture isfree false audience adult
+redis-cli -h $host -p $port TS.CREATE zew:gorillafeeding:{tickets} retention 0 LABELS data tickets attraction gorillafeeding isfree true audience all
+redis-cli -h $host -p $port TS.CREATE zew:3dmovie:{tickets} retention 0 LABELS data tickets attraction 3dmovie isfree false audience all
+redis-cli -h $host -p $port TS.CREATE zew:snakefeeding:{tickets} retention 0 LABELS data tickets attraction snakefeeding isfree true audience all
+
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,12) redis.call('TS.ADD', 'zew:adult:{tickets}', ((index*21200000)+season), (vall+(index%9)) ) end end" 1 {tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,22) redis.call('TS.ADD', 'zew:child:{tickets}', ((index*21200000)+season), (vall+(index%19)) ) end end" 1 {tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,9) redis.call('TS.ADD', 'zew:pettingzoo:{tickets}', ((index*21200000)+season), (vall+(index%4)) ) end end" 1 {tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,2) redis.call('TS.ADD', 'zew:bonobolecture:{tickets}', ((index*21200000)+season), (vall*(index%2)) ) end end" 1 {tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,4) redis.call('TS.ADD', 'zew:3dmovie:{tickets}', ((index*21200000)+season), (vall*(index%2)) ) end end" 1 {tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,30) redis.call('TS.ADD', 'zew:gorillafeeding:{tickets}', ((index*21200000)+season), (vall+(index%7)) ) end end" 1 {tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,30) redis.call('TS.ADD', 'zew:snakefeeding:{tickets}', ((index*(21200000*6))+season), (vall*(index%2)) ) end end" 1 {tickets}
+```
 * now begin your analysis using Time-Series Queries:
 
 ``` 
@@ -36,7 +44,23 @@ TS.MRANGE - + FILTER data=tickets isfree=(false,true) GROUPBY isfree REDUCE SUM
 ```
 
 * can you tell whether tickets that are free are more popular than tickets that are not free?
-
+###Daily story:
+```                
+TS.MRANGE - + AGGREGATION SUM 86400000 FILTER data=tickets attraction!=(entrance) GROUPBY isfree REDUCE SUM
+```
+###Weekly story showing free vs non-free events that are not the entrance fee:
+```
+TS.MRANGE - + AGGREGATION SUM 604800000 FILTER data=tickets attraction!=(entrance) GROUPBY isfree REDUCE SUM
+```
+###Weekly story with a different resolution (showing individual attractions):
+```
+TS.MRANGE - + AGGREGATION SUM 604800000 FILTER data=tickets attraction!=(entrance) GROUPBY attraction REDUCE SUM
+```
+###Monthly story showing free vs non-free events that are not the entrance fee:
+```
+TS.MRANGE - + AGGREGATION SUM 2628288000 FILTER data=tickets attraction!=(entrance) GROUPBY isfree REDUCE SUM
+```
+  
 * How would you query the time-series to uncover which of the attractions sells the most tickets?
 
 [link_to_documentation_for_redis_time_series](https://redis.io/commands/?group=timeseries)
