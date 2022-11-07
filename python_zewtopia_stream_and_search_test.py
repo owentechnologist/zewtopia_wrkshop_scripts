@@ -8,9 +8,8 @@ from redis.client import Pipeline
 ## python3 python_zewtopia_stream_and_search_test.py
 
 # TODO: fix the host and port to match your redis database endpoint:
-redishost = 'flashme.southcentralus.redisenterprise.cache.azure.net'
-#redishost = '192.168.1.21'
-redispassword = 'dFiKT05dnabaD5twz7aWU0YBHkV+mnfesARsAwOSAGQ=' #FIXME (if you are not using default user with no password)
+redishost = '192.168.1.21'
+redispassword = '' #FIXME (if you are not using default user with no password)
 redisport = 10000
 redisuser = 'default'  #FIXME (if you are not using default user with no password)
 
@@ -50,7 +49,7 @@ except:
 # Have a single worker belonging to our group process 10 stream events
 # using the > character tells redis to only deliver events unprocessed by this group: 
 streamsdict = {'zew:{batch2}:revenue:stream': ">"}
-for x in range(10):
+for x in range(25):
     try:
         response = myredis.xreadgroup('group1','processorA',streams=streamsdict,count=1,noack=False)
         eventid = response[0][1][0][0] # the id assigned to the event when it was created
@@ -60,6 +59,7 @@ for x in range(10):
         # create a Hash record for the processed event:
         myredis.hset('zew:revenue:txid'+eventid,mapping={'visitor_purchase_item_name':itemname,'visitor_purchase_item_cost':itemcost})
         print(myredis.hgetall('zew:revenue:txid'+eventid))
+        myredis.xack('zew:{batch2}:revenue:stream','group1',eventid)
     except:
         print('There are no more items in this stream to be processed by this group')
         length = myredis.execute_command('XLEN',"zew:{batch2}:revenue:stream")
