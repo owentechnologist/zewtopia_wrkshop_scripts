@@ -35,7 +35,7 @@ pip3 install redis[hiredis]
 [python_zewtopia_stream_and_search_test.py](./python_zewtopia_stream_and_search_test.py)
 
 
-### Then you try working with Redis Time-series data for ticket sales over 10 years:
+### Then you try working with Redis Time-series data for ticket sales over several months:
 [ticket_sales_time_series.md](./ticket_sales_time_series.md)
 
 ### Learn about using Redis CuckooFilters for de-duping:
