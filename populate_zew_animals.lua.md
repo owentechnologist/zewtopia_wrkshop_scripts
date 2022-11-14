@@ -29,7 +29,7 @@ EVAL "for index = 1,3000 do local nums = '123456789' local alphs = redis.call('S
  FT.ALIASADD idxa_zew idx_zew
 ```
 
-* Test a simple Search query:
+* Test a simple Search query (note the use of phonetic matching):
 
 ``` 
 FT.search idxa_zew "@name:bloo" return 1 name LIMIT 0 3

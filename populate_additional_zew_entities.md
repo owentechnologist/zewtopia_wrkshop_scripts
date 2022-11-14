@@ -49,25 +49,37 @@ FT.CREATE idx_all_zew PREFIX 1 "zew:" SCHEMA name TEXT PHONETIC dm:en NOSTEM spe
 FT.SYNUPDATE idx_all_zew "violence_symptoms" "bruise" "injury" "wound" "scrape" "scratch" "lacerations" "trauma"
 ```
 
+## remap our search index alias to use this new expanded index:
+(in case you don't already have an alias you could just create one now:)
+``` 
+FT.ALIASADD idxa_zew idx_all_zew
+```
+Alternatively, you can remap one previously created:
+``` 
+FT.ALIASUPDATE idxa_zew idx_all_zew
+```
+
 ## Some example Queries:
 
 ### This query finds the animals and employed trainers working within 50 meters of a known building’s location.  (note the use of the NOT pending status allows for results from other entities that do not have that field at all)
 
 This is a kind of geo-spatial and species join because multiple entities share a common geo-spatial range and species. 
 ```
-FT.SEARCH idx_all_zew "@species:{Kan*} @current_gps_location:[117.14803,32.73259, 50 m] -@known_disorders:('non*') -@status:(pending)" RETURN 2 role name SORTBY role DESC
+FT.SEARCH idxa_zew "@species:{Kan*} @current_gps_location:[117.14803,32.73259, 50 m] -@known_disorders:('non*') -@status:(pending)" RETURN 2 role name SORTBY role DESC
 ```
 
 ### This query finds the animals and trainers working within 150 meters of a known building’s location and returns the matching_members_count of how many trainers, animals and buildings related to the particular species exist.
 
 This is a kind of geo-spatial and species join because multiple entities share a common geo-spatial range and species.
 ``` 
-FT.AGGREGATE idx_all_zew "@species:{Kan*} @current_gps_location:[117.14803,32.73259, 150 m] -@status:(pending)" GROUPBY 4 @species @role @contact_phone @contact_name REDUCE COUNT 0 AS matching_members_count SORTBY 2 @matching_members_count ASC
+FT.AGGREGATE idxa_zew "@species:{Kan*} @current_gps_location:[117.14803,32.73259, 150 m] -@status:(pending)" GROUPBY 4 @species @role @contact_phone @contact_name REDUCE COUNT 0 AS matching_members_count SORTBY 2 @matching_members_count ASC
 ```
 
 ### Find the tenure category for a bonobo that has 797 days_in_zoo using a range-query: 
 This returns results of the Tenure class for the bonobo with the specified number of days in zoo.  If you include a matching bonobo animal name in the OR clause, that bonobo information will be confirmed (returned) as well. 
 <em>(range-queries like this can be useful when sequential ids or IPAddresses or measures of time can be grouped together)</em>
 ```
-FT.SEARCH idx_all_zew "(@days_in_zoo_start:[-inf 797] @days_in_zoo_end:[ 797 +inf] @species:{Bon*}) | @name:('Chess*') " return 3 days_in_zoo description tenure_class LIMIT 0 2
+FT.SEARCH idxa_zew "(@days_in_zoo_start:[-inf 797] @days_in_zoo_end:[ 797 +inf] @species:{Bon*}) | @name:('Chess*') " return 3 days_in_zoo description tenure_class LIMIT 0 2
 ```
+
+How would you find all the injured Gorillas?
