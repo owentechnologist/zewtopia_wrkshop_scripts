@@ -8,6 +8,8 @@ It is also expected that you have access to a command shell that allows you to r
 ## Examples include Lua scripts and redis-cli commands as well as some simple python code
 
 # Welcome to Zewtopia!  <em>(a very fake zoo)</em>
+![Zewtopia202211_Entities_Datatyoes_and_manufacture](./Zewtopia202211.png)
+
 
 ### Get started by running the scripts found here:
 [populate_zew_animals.lua.md](./populate_zew_animals.lua.md)
