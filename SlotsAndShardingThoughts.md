@@ -84,3 +84,100 @@ OK
 Then , just be sure to only attempt to process the keys that are found in that local shard during that particular execution.
 
 Gather all the local keys that match the pattern of interest and be sure to only process those each time the script is run.  You need to run the script X times where X == number of Partitions (each time with a different routing value as the argument)
+
+****** 
+For example - let's say we wanted to create a second copy of all keys starting with prefix equal to some value (ARGV[2] in the following script):
+``` 
+local index = ARGV[1] 
+local prefix = ARGV[2] 
+local count = ARGV[3] 
+local scanResults = redis.call('SCAN',index,'MATCH',prefix,'COUNT',count) 
+if #{scanResults[2][1]} > 0 
+  then local innerLoop = 1 
+  while #{scanResults[2][innerLoop]} > 0 
+    do redis.call('COPY',scanResults[2][innerLoop],'update:'..scanResults[2][innerLoop]..'{'..scanResults[2][innerLoop]..'}') 
+    innerLoop=(innerLoop+1) 
+  end 
+end 
+return scanResults[1]
+```
+We load the script to get a reusable SHA value:
+``` 
+SCRIPT LOAD "local index = ARGV[1] local prefix = ARGV[2] local count = ARGV[3] local scanResults = redis.call('SCAN',index,'MATCH',prefix,'COUNT',count) if #{scanResults[2][1]} > 0 then local innerLoop = 1 while #{scanResults[2][innerLoop]} > 0 do redis.call('COPY',scanResults[2][innerLoop],'update:'..scanResults[2][innerLoop]..'{'..scanResults[2][innerLoop]..'}') innerLoop=(innerLoop+1) end end return scanResults[1]"
+ac849bf9367e23d9fddba59a0738ce898e9287b6
+```
+We can then call it as many times as we need to... to ensure all matching keys in all shards/partitions are processed:
+``` 
+EVALSHA ac849bf9367e23d9fddba59a0738ce898e9287b6 1 {1} 0 s:nam* 1
+3
+EVALSHA ac849bf9367e23d9fddba59a0738ce898e9287b6 1 {1} 3 s:nam* 1
+0
+```
+#### Notice that when calling the script repeatedly, we first use 0 and then use the return value as the 1st argument which allows us to SCAN all keys in that shard 
+(when the response from the script is a 0 - we can stop executing it against that routing value as it means there are no more possible matches in that partition)
+
+Next: we move on to the next/remaining Shard/routing values:
+
+``` 
+EVALSHA ac849bf9367e23d9fddba59a0738ce898e9287b6 1 {4} 0 s:nam* 1
+3
+EVALSHA ac849bf9367e23d9fddba59a0738ce898e9287b6 1 {4} 3 s:nam* 1
+0
+```
+
+So, if we started like this:
+``` 
+SET s:name1 Fred
+OK
+SET s:name2 Julius
+OK
+SET s:name3 Misha
+OK
+SET s:name4 Friedrich
+OK
+SET s:name5 Samantha
+OK
+SET s:name6 Mufasa
+OK
+SET s:name7 owen
+OK
+SET s:name8 Xi
+OK
+SET s:name9 Susan
+OK
+SET s:name10 Ameer
+OK
+```
+After running the script as many times as needed against all shards/partitions: 
+``` 
+> keys *
+ 1) "s:name1"
+ 2) "s:name9"
+ 3) "update:s:name5{s:name5}"
+ 4) "s:name5"
+ 5) "update:s:name9{s:name9}"
+ 6) "update:s:name1{s:name1}"
+ 7) "s:name4"
+ 8) "s:name8"
+ 9) "update:s:name8{s:name8}"
+10) "update:s:name4{s:name4}"
+11) "update:s:name10{s:name10}"
+12) "s:name10"
+13) "s:name7"
+14) "update:s:name3{s:name3}"
+15) "update:s:name7{s:name7}"
+16) "s:name3"
+17) "update:s:name2{s:name2}"
+18) "update:s:name6{s:name6}"
+19) "s:name6"
+20) "s:name2"
+
+> get update:s:name1{s:name1}
+"Fred"
+```
+
+
+
+
+
+
