@@ -71,12 +71,12 @@ EVALSHA <SHA_VALUE> 1 {1AA} <other_args_separated_by_spaces>
 If you do not use deliberate routing values in your keys it's OK - you can use SCAN to find the ones that are local to a particular routing value: 
 
 ``` 
-192.168.1.20:18386> SET s:name owen
+> SET s:name owen
 OK
-192.168.1.20:18386> EVAL "return redis.call('SCAN','0','MATCH','s:na*','COUNT','9000000')" 1 {1}
+> EVAL "return redis.call('SCAN','0','MATCH','s:na*','COUNT','9000000')" 1 {1}
 1) "0"
 2) (empty array)
-192.168.1.20:18386> EVAL "return redis.call('SCAN','0','MATCH','s:na*','COUNT','9000000')" 1 {2}
+> EVAL "return redis.call('SCAN','0','MATCH','s:na*','COUNT','9000000')" 1 {2}
 1) "0"
 2) 1) "s:name"
 ```
