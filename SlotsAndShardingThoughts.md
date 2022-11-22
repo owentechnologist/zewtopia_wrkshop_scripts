@@ -187,6 +187,10 @@ After running the script as many times as needed against all shards/partitions:
 "Fred"
 ```
 
+It may not be obvious that in order for the copy to work we have to ensure that the copy is written to the same shard as where the execution is taking place.
+
+It is because of this, that the script uses the original keyname as the routing value for each copy.
+The script could instead use the KEYS[1] value as the routing value for each copy - it would accomplish the same outcome.
 
 
 
