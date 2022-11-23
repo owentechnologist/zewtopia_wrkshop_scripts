@@ -192,6 +192,9 @@ It may not be obvious that in order for the copy to work we have to ensure that 
 It is because of this, that the script uses the original keyname as the routing value for each copy.
 The script could instead use the KEYS[1] value as the routing value for each copy - it would accomplish the same outcome.
 
+The one extra value of using the original keyname as the routing value is in the case where a future scaling event occurs and you want to redistribute your keys to more shards - using the original name as the routing value will facilitate more division - according to the variance present in the original keynames.
+
+Note also - in the above scenario, in most cases it would be good to pass a larger value for the count so that more keys are processed in a single execution - however, LUA scripts will time out if they take too long, so you will want to test and find a happy count value that is optimal for your situation and needs. 
 
 
 
