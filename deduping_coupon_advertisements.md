@@ -21,7 +21,7 @@ EVAL "for id = 1,150 do redis.call('SADD',KEYS[1],'coupon'..id) end" 1 zew:coupo
 
 Next, we will condense a month's advertising activity into a few seconds using the following lua script:
 ```
-EVAL "for index = 1,1000000, 1 do local vistorid = redis.call('SRANDMEMBER',KEYS[3]) local couponid = redis.call('SRANDMEMBER',KEYS[2]) local compound_id = ('visitorid:'..vistorid..':couponid:'..couponid) local addresult = redis.call('CF.ADDNX', KEYS[1], (compound_id)) if addresult == 0 then redis.call('XADD',KEYS[4],'*','Add_duplicate_prevented_for',compound_id) end end" 4 cf:coupons:october:{ids} zew:coupon:{ids} zew:visitor:{ids} add_dupe_stream{ids}
+EVAL "for index = 1,800000, 1 do local vistorid = redis.call('SRANDMEMBER',KEYS[3]) local couponid = redis.call('SRANDMEMBER',KEYS[2]) local compound_id = ('visitorid:'..vistorid..':couponid:'..couponid) local addresult = redis.call('CF.ADDNX', KEYS[1], (compound_id)) if addresult == 0 then redis.call('XADD',KEYS[4],'*','Add_duplicate_prevented_for',compound_id) end end" 4 cf:coupons:october:{ids} zew:coupon:{ids} zew:visitor:{ids} add_dupe_stream{ids}
 ```
 
 Finally, we can see how many (if any) users were protected from receiving duplicate notices thanks to the use of ADDNX:
@@ -38,8 +38,12 @@ Delete it:
 ```
 Del cf:coupons:october:{ids}
 ```
+Also delete the stream key that was tracking the avoided duplicates:
 
-Then recreate it and try the whole exercise again with the following settings:
+``` 
+del add_dupe_stream{ids}
 ```
-CF.RESERVE cf:coupons:october:{ids} 8000000 MAXITERATIONS 10 EXPANSION 1 BUCKETSIZE 2
+Then recreate the Cuckoo filter and try the whole exercise again with the following settings:
+```
+CF.RESERVE cf:coupons:october:{ids} 10000000 MAXITERATIONS 10 EXPANSION 1 BUCKETSIZE 2
 ```
