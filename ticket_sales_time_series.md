@@ -87,6 +87,6 @@ TS.MRANGE - + AGGREGATION SUM 604800000 FILTER data=tickets attraction!=(entranc
 TS.MRANGE - + AGGREGATION SUM 2628288000 FILTER data=tickets attraction!=(entrance) GROUPBY isfree REDUCE SUM
 ```
   
-* How would you query the time-series to uncover which of the attractions sells the most tickets on average in each week?
+* How would you query the time-series to uncover which of the attractions sells the most tickets near the beginning of each month? And what about near the end of each month?
 
 [link_to_documentation_for_redis_time_series](https://redis.io/commands/?group=timeseries)
