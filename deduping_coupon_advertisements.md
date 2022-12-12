@@ -13,6 +13,9 @@ To simulate this activity we will first create two Sets from which we will draw 
 
 ```
 EVAL "for id = 1,1200000 do redis.call('SADD',KEYS[1],'visitor'..id) end" 1 zew:visitor:{ids}
+```
+
+```
 EVAL "for id = 1,150 do redis.call('SADD',KEYS[1],'coupon'..id) end" 1 zew:coupon:{ids}
 ```
 
