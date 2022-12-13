@@ -152,10 +152,10 @@ port=6379
 ### the next two are the responses given when you load each of the LUA scripts on your system
 
 #LUASHAZ is the variable for the SortedSet Sliding Window Script:
-LUASHAZ=cbff0c5457b4bb3ad718d5f8f147ed70bd6a1d37
+LUASHAZ=FIXME-make me something like - c2abd52961929c86bc593c66bc304e9ba5b5990e
 
 #LUASHAUF is the variable for the UniForm String-key timeout solution script:
-LUASHAUF=c1abd52961929c86bc593c66bc304e9ba5b5990e
+LUASHAUF=FIXME-make me something like - c1abd52961929c86bc593c66bc304e9ba5b5e30e
 
 ## The following values are provided as args to this script (do not edit below here)
 howmanytimes=$1
@@ -178,6 +178,11 @@ do
   x=$(redis-cli -h $host -p $port "TS.ADD" "zew:tigerfeeding:Z{ratelimit}" "*" "1")
   counter=$[ $counter+1 ]
   fi
+done
+
+counter="0"
+while [ $counter -lt $howmanytimes ]
+do
   #TEST 2 (Using Uniform Rate Limiter) -- Note that to get to allowedops we need allowedops separate client invocations:
   rlkeyname="rl:zewtopia.com/tigerfeeding:user$((counter%allowedops))"
   getThrough=$(redis-cli -h $host -p $port "EVALSHA" $LUASHAUF "1" $rlkeyname "10000")
@@ -186,6 +191,11 @@ do
   x=$(redis-cli -h $host -p $port "TS.ADD" "zew:tigerfeeding:UF{ratelimit}" "*" "1")
   counter=$[ $counter+1 ]
   fi
+done
+
+counter="0"
+while [ $counter -lt $howmanytimes ]
+do
   #TEST 3 (repeat use of SortedSet to show that it stays at the limit regardless of slight delays and bursts)
   getThrough=$(redis-cli -h $host -p $port "EVALSHA" $LUASHAZ "1" "z:zewtopia.com/tigerfeeding" "10000000" $allowedops)
   if [ 1 == "$getThrough" ]
@@ -193,6 +203,11 @@ do
   x=$(redis-cli -h $host -p $port "TS.ADD" "zew:tigerfeeding:Z{ratelimit}" "*" "1")
   counter=$[ $counter+1 ]
   fi
+done
+
+counter="0"
+while [ $counter -lt $howmanytimes ]
+do
   #TEST 4 (Repeat Use of Uniform Rate Limiter with New userIDs) -- Here we see how clients will gang up and execute more operations if the allowedops value is smaller than the unique number of clients:
   rlkeyname="rl:zewtopia.com/tigerfeeding:user$(((counter%allowedops)+900000000)))"
   getThrough=$(redis-cli -h $host -p $port "EVALSHA" $LUASHAUF "1" $rlkeyname "10000")
@@ -202,5 +217,4 @@ do
   counter=$[ $counter+1 ]
   fi
 done
-
 ```
