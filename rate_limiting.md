@@ -146,8 +146,8 @@ echo "TS.MRANGE - + AGGREGATION SUM 100000 FILTER data=hits"
 
 ### You are expected to edit this file and provide the following reused variables
 # the next two are the connection details for your instance of redis:
-host=127.0.0.1
-port=6379
+host=redis-10900.re-cluster1.ps-redislabs.org
+port=10900
 
 ### the next two are the responses given when you load each of the LUA scripts on your system
 
