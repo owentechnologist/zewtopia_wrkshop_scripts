@@ -142,7 +142,7 @@ if [ $# -eq 0 ]; then
 fi 
 echo "After this Script runs - try the following TimeSeries Query (Using RedisInsight) to see the behavior of the two rate limiters:"
 echo "TS.MRANGE - + AGGREGATION SUM 1000 FILTER data=hits"
-echo "TS.MRANGE - + AGGREGATION SUM 800000000 FILTER data=hits"
+echo "TS.MRANGE - + AGGREGATION SUM 100000 FILTER data=hits"
 
 ### You are expected to edit this file and provide the following reused variables
 # the next two are the connection details for your instance of redis:
