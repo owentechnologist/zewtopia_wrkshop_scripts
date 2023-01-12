@@ -50,12 +50,12 @@ FT.CREATE idx_activities ON JSON PREFIX 1 zew: SCHEMA $.times[*].military AS mil
 ### Query JSON data using RediSearch and the JSON path:
 
 ``` 
-FT.SEARCH idx_zew_activities @times:{08*} return 3 $.name $.times $.location
+FT.SEARCH idx_activities @military_time:{08*} return 3 $.name $.times $.location limit 0 3
 ```
 
 ### Query JSON data using RediSearch and the attribute aliases:
 ``` 
-FT.SEARCH idx_zew_activities @times:{11*} return 2 event_name location
+FT.SEARCH idx_activities @military_time:{11*} return 2 event_name location LIMIT 0 3
 ```
 
 #### NB: <em> A more involved Jedis/Java based JSON + Search example is available here:</em>
