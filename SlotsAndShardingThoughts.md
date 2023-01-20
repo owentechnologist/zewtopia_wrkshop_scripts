@@ -196,6 +196,55 @@ The one extra value of using the original keyname as the routing value is in the
 
 Note also - in the above scenario, in most cases it would be good to pass a larger value for the count so that more keys are processed in a single execution - however, LUA scripts will time out if they take too long, so you will want to test and find a happy count value that is optimal for your situation and needs. 
 
+## Here is a second example - similar to the one above - but this one unlinks keys instead:
+
+1. load the script into Redis so it is easily reused across clients
+2. execute the script using the returned SHA value and supplying the necessary args:  
+```1``` (to indicate a single routing key value is being provided)
+```{1}``` (to act as the routing value for this iteration)   
+```0``` (to indicate the cursorID for the embedded SCAN operation)  
+```mon*``` (to indicate the prefix to be used in the scan)
+```500``` (to determine how many keys to scan looking for a match)
+3. Capture the returned cursorID and re-execute the script using the same routing value until it is equal to ```0```
+4. Once the returned cursorID is equal to ```0``` - move on to the next routing value 
+5. Repeat until all routing values have been utilized and all cursorIDs have returned ```0```
+
+## <em>Here it is in action:</em>
+(note in the example below - the use of keys command is not recommended, nor necessary and only used as a way to prove the script works!)
+``` 
+SCRIPT LOAD "local index = ARGV[1] local prefix = ARGV[2] local count = ARGV[3] local scanResults = redis.call('SCAN',index,'MATCH',prefix,'COUNT',count) if #{scanResults[2][1]} > 0 then local innerLoop = 1 while #{scanResults[2][innerLoop]} > 0 do redis.call('UNLINK',scanResults[2][innerLoop]) innerLoop=(innerLoop+1) end end return scanResults[1]"
+
+"3624b7980adc18c24708839669e203a8a15cdeec"
+
+> keys mon*
+1) "mon{1}"
+2) "mon{4}"
+3) "mon{2}"
+4) "mon{3}"
+
+> EVALSHA "3624b7980adc18c24708839669e203a8a15cdeec" 1 {1} 0 mon* 500
+"83"
+
+> keys mon*
+1) "mon{2}"
+2) "mon{3}"
+
+> EVALSHA "3624b7980adc18c24708839669e203a8a15cdeec" 1 {1} 83 mon* 500
+"0"
+
+> EVALSHA "3624b7980adc18c24708839669e203a8a15cdeec" 1 {2} 0 mon* 500
+"595"
+
+> keys mon*
+1) "mon{2}"
+
+> EVALSHA "3624b7980adc18c24708839669e203a8a15cdeec" 1 {2} 595 mon* 500
+"0"
+
+> keys mon*
+(empty list or set)
+```
+
 
 
 
