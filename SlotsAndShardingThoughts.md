@@ -211,11 +211,11 @@ Note also - in the above scenario, in most cases it would be good to pass a larg
 
 ## <em>Here it is in action:</em>
 (note in the example below - the use of keys command is not recommended, nor necessary and only used as a way to prove the script works!)
+```
+SCRIPT LOAD "local index = ARGV[1] local prefix = ARGV[2] local count = ARGV[3] local unlinked = 0 local scanResults = redis.call('SCAN',index,'MATCH',prefix,'COUNT',count) if #{scanResults[2][1]} > 0 then local innerLoop = 1 while #{scanResults[2][innerLoop]} > 0 do redis.call('UNLINK',scanResults[2][innerLoop]) innerLoop=(innerLoop+1) unlinked=(unlinked+1)end end return 'unlinked '..unlinked..' keys!  Use this # as your next scan id Arg: '..scanResults[1]"
+```
+in this example - result of SCRIPT LOAD Is ```"3624b7980adc18c24708839669e203a8a15cdeec"```
 ``` 
-SCRIPT LOAD "local index = ARGV[1] local prefix = ARGV[2] local count = ARGV[3] local scanResults = redis.call('SCAN',index,'MATCH',prefix,'COUNT',count) if #{scanResults[2][1]} > 0 then local innerLoop = 1 while #{scanResults[2][innerLoop]} > 0 do redis.call('UNLINK',scanResults[2][innerLoop]) innerLoop=(innerLoop+1) end end return scanResults[1]"
-
-"3624b7980adc18c24708839669e203a8a15cdeec"
-
 > keys mon*
 1) "mon{1}"
 2) "mon{4}"
@@ -223,23 +223,27 @@ SCRIPT LOAD "local index = ARGV[1] local prefix = ARGV[2] local count = ARGV[3] 
 4) "mon{3}"
 
 > EVALSHA "3624b7980adc18c24708839669e203a8a15cdeec" 1 {1} 0 mon* 500
-"83"
+"unlinked 2 keys!  Use this # as your next scan id Arg: 83"
 
 > keys mon*
 1) "mon{2}"
 2) "mon{3}"
 
 > EVALSHA "3624b7980adc18c24708839669e203a8a15cdeec" 1 {1} 83 mon* 500
-"0"
+"unlinked 0 keys!  Use this # as your next scan id Arg: 0"
+
+> keys mon*
+1) "mon{2}"
+2) "mon{3}"
 
 > EVALSHA "3624b7980adc18c24708839669e203a8a15cdeec" 1 {2} 0 mon* 500
-"595"
+"unlinked 1 keys!  Use this # as your next scan id Arg: 595"
 
 > keys mon*
 1) "mon{2}"
 
 > EVALSHA "3624b7980adc18c24708839669e203a8a15cdeec" 1 {2} 595 mon* 500
-"0"
+"unlinked 1 keys!  Use this # as your next scan id Arg: 0"
 
 > keys mon*
 (empty list or set)
