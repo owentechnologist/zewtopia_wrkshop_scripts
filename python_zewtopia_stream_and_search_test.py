@@ -8,9 +8,9 @@ from redis.client import Pipeline
 ## python3 python_zewtopia_stream_and_search_test.py
 
 # TODO: fix the host and port to match your redis database endpoint:
-redishost = '127.0.0.1'
+redishost = '192.168.1.20'
 redispassword = '' #FIXME (if you are not using default user with no password)
-redisport = 6379
+redisport = 12000
 redisuser = 'default'  #FIXME (if you are not using default user with no password)
 
 # if not using TLS:

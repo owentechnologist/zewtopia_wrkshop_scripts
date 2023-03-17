@@ -4,7 +4,7 @@ I refer to the value used to route requests and identify the associated slots to
 
 When executing a LUA script against redis it is good to provide a routing value that matches the slot assignment of the interesting keys to be processed during the execution of that script.  
 
-This is done by ensuring that at least 1 key-value is passed to the LUA script. (which is the way LUA in Redis figures out the routing value)
+This is done by ensuring that at least 1 key name (or routing value provided as {some_value} ) is passed to the LUA script. (which is the way LUA in Redis figures out the routing value)
 
 The routing value is easily identified by using the curly braces to surround it.  When your intention is to process multiple keys that live in the same slots - you can just provide the routing value in its {} rathar than naming all the keys explicitly as args to the LUA script.
 

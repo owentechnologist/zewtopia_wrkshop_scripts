@@ -137,7 +137,7 @@ if [ $# -eq 0 ]; then
     echo "!!!     !!!!!     !!!!     No arguments provided!!!   !!!"
     echo "- please provide 2 args as integer values in the following order:"
     echo "[how_many_loops_to_run] [how_many_operations_to_allow_in_10_seconds]"
-    echo "Example:  ./ratelimit.sh 400 15"
+    echo "Example:  ./ratelimit.sh 400 300"
     exit 1
 fi 
 echo "After this Script runs - try the following TimeSeries Query (Using RedisInsight) to see the behavior of the two rate limiters:"
