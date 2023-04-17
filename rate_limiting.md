@@ -15,6 +15,9 @@ rl:zewtopia.com/tigerfeeding:bob
 #### Every time a request is made we check the TTL on the gate to see if it is > 0 
 #### If it is greater than zero we do not allow another request
 #### Else - we set the TTL to the time-frame-in-seconds
+
+![StringExpiryRateLimiter](StringExpiryRateLimiter.png)
+
 #### When a client seeks to access the resource associated with the gate, we check for TTL > 0 and if so, deny the request.
 #### Let's look at how that behavior looks over time by firing many requests against a gated resource and logging the ones that get through as events in a TimeSeries key.
 #### We have our clients call this LUA script to manage the gating logic:
@@ -85,8 +88,7 @@ SCRIPT LOAD "local oneMeansOK = 1 local glimit = 0+ARGV[2] local t=redis.call('T
 <li>The allowed number of invocations for the time-window</li>
 </ol>
 
-<img src="https://github.com/owentechnologist/LUA_rateLimiting/blob/main/ratelimiting.png" width="800"/>
-
+![SortedSetSlidingWindow](SortedSetSlidingWindow.png)
 ``` 
 127.0.0.1:6379> EVALSHA cbff0c5457b4bb3ad718d5f8f147ed70bd6a1d37 1 z:zewtopia.com/tigerfeeding 10000000 3
 (integer) 1
