@@ -124,7 +124,7 @@ SCRIPT LOAD "local oneMeansOK = 1 local glimit = 0+ARGV[2] local t=redis.call('T
 [https://github.com/owentechnologist/LUA_rateLimiting](https://github.com/owentechnologist/LUA_rateLimiting)
 
 
-Below is a shell script that calls TIMESERIES as the protected resource - this is handy because we can then run queries to see when calls get through to the TS keys.
+Below is a shell script that calls Redis TIMESERIES as the protected resource - this is handy because we can then run queries to see when calls get through to the TS keys.
 
 ``` 
 #!/bin/bash
@@ -220,3 +220,57 @@ do
   fi
 done
 ```
+## And now for something a bit different...
+Coupling Rate Limiting with event/task processing 
+### Request-coupled Leaking Bucket Algorithm:
+This version does not depend on time - but rather the speed at which some processor can work through queued requests
+### Rate Limiting implemented by building a limited length queue/stream:
+If we only allow 10 operations in our queue at a time:
+1) Check the length of the stream:
+```
+XLEN x:rl:zewtopia.com/tigerfeeding
+```
+
+(if we get back > 10
+we return 0 indicating too many requests
+have come in for that resource)
+2) If XLEN returns < 10 We can use the XADD command
+
+```
+XADD x:rl:zewtopia.com/tigerfeeding * request_details "some~values~to~be~parsed~maybe~tilde~delimited"
+```
+
+3) A separate service removes entries from the stream, parses the request_details,
+   and processes the entry. This allows the processing system  
+   to decide how frequently new requests can be added.  
+   If the processing slows down, new requests are dropped.
+   If you can scale the processors, more requests can be served.
+
+```
+SCRIPT LOAD "local oneMeansOK = 1 local glimit = 0+ARGV[1] if (redis.call('XLEN',KEYS[1]) == glimit) then oneMeansOK = 0 else redis.call('XADD',KEYS[1],'*',ARGV[2],ARGV[3]) end return oneMeansOK"
+```
+If the returned SHA value was this: bfe8b5121d88a32644a22fb44b7c1f082515339de
+```
+EVALSHA fe8b5121d88a32644a22fb44b7c1f082515339de 1 x:rl:zewtopia.com/tigerfeeding 10 request_details "some~values~to~be~parsed~maybe~tilde~delimited"
+```
+
+#### NB: The Stream processor in this example would have to delete the entries from the stream once they are completely processed
+(they could be written to a second stream or to JSON or Hash objects for search indexing allowing easy reporting on the total set and their outcomes/status)
+<p/>
+
+#### Pros:
+
+* Processor decides rate of processing
+* execution of check is faster than SortedSet (51 microseconds vs 65)
+* allows for complex processing and handles sending request params
+* Processor can utilize Consumer Groups
+
+Cons:
+* Processor (or helper) needs to utilize Redis Stream API
+
+
+### Variation: Use a LIST instead:
+* Script would check LLEN to get length of List and perform LPUSH
+* processor can RPOP or LPOP entries on whatever schedule it likes
+* Lists do not have the processing guarantees that Streams and consumer groups have
+* More suitable when only used as Rate limiter (find another way to manage args and other state)
