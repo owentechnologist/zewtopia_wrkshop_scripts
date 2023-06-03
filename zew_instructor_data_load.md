@@ -40,6 +40,10 @@ FT.CREATE ot11_idx2 PREFIX 1 "zew:tenure" SCHEMA days_in_zoo_start NUMERIC days_
 ``` 
 FT.SEARCH ot11_idx2 "@days_in_zoo_start:[-inf 18] @days_in_zoo_end:[18 +inf]" return 2 tenure_class description
 ```
+* adding the injury SYNONYM to the first index created:
+``` 
+FT.SYNUPDATE ot11_idx_zew synonym1 "bruise" "injury" "wound" "scrape" "scratch" "lacerations" "trauma"
+```
 
 * the following creates two JSON zoo events and the ot11 search index:
 ```
@@ -68,6 +72,7 @@ FT.AGGREGATE ot11_activities * GROUPBY 0 REDUCE AVG 1 @cost as AVG_COST
 * The following is the stream event creation/processing example made easy to copy/paste:
 * Note that rather than use a prefix to isolate the keys - in this example a specific routing value is used 
 * to create unique sets. each participant should replace {ot11} with their initials and birth-month wrapped in { } 
+
 ``` 
 SADD dates{ot11} "2022-12-24" "2022-12-25" "2022-12-26" "2022-12-27" "2022-12-28" "2022-12-29" "2022-12-30" "2022-12-31"
 SADD ids{ot11} 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
