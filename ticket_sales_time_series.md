@@ -12,13 +12,13 @@
 * populate the keys with values for roughly 1 year of ticket sales:
 
 ``` 
-TS.CREATE ot11:zew:adult:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience adult
-TS.CREATE ot11:zew:child:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience child
-TS.CREATE ot11:zew:pettingzoo:{tickets} retention 0 LABELS data tickets attraction pettingzoo isfree false audience all
-TS.CREATE ot11:zew:bonobolecture:{tickets} retention 0 LABELS data tickets attraction bonobolecture isfree false audience adult
-TS.CREATE ot11:zew:gorillafeeding:{tickets} retention 0 LABELS data tickets attraction gorillafeeding isfree true audience all
-TS.CREATE ot11:zew:3dmovie:{tickets} retention 0 LABELS data tickets attraction 3dmovie isfree false audience all
-TS.CREATE ot11:zew:snakefeeding:{tickets} retention 0 LABELS data tickets attraction snakefeeding isfree true audience all
+TS.CREATE ot11:zew:adult:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience adult author ot11
+TS.CREATE ot11:zew:child:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience child author ot11
+TS.CREATE ot11:zew:pettingzoo:{tickets} retention 0 LABELS data tickets attraction pettingzoo isfree false audience all author ot11
+TS.CREATE ot11:zew:bonobolecture:{tickets} retention 0 LABELS data tickets attraction bonobolecture isfree false audience adult author ot11
+TS.CREATE ot11:zew:gorillafeeding:{tickets} retention 0 LABELS data tickets attraction gorillafeeding isfree true audience all author ot11
+TS.CREATE ot11:zew:3dmovie:{tickets} retention 0 LABELS data tickets attraction 3dmovie isfree false audience all author ot11
+TS.CREATE ot11:zew:snakefeeding:{tickets} retention 0 LABELS data tickets attraction snakefeeding isfree true audience all author ot11
 ```
 ## For each of the following LUA script executions provide the key-name with your prefix as the 1st key-name argument
 ```
@@ -79,29 +79,29 @@ NB: Copy paste the following to a file on your machine and edit the host and por
 #!/bin/sh
 host=127.0.0.1
 port=6379
-redis-cli -h $host -p $port del zew:adult:{tickets}
-redis-cli -h $host -p $port del zew:child:{tickets}
-redis-cli -h $host -p $port del zew:pettingzoo:{tickets}
-redis-cli -h $host -p $port del zew:bonobolecture:{tickets}
-redis-cli -h $host -p $port del zew:gorillafeeding:{tickets}
-redis-cli -h $host -p $port del zew:3dmovie:{tickets}
-redis-cli -h $host -p $port del zew:snakefeeding:{tickets}
+redis-cli -h $host -p $port del ot11:zew:adult:{tickets}
+redis-cli -h $host -p $port del ot11:zew:child:{tickets}
+redis-cli -h $host -p $port del ot11:zew:pettingzoo:{tickets}
+redis-cli -h $host -p $port del ot11:zew:bonobolecture:{tickets}
+redis-cli -h $host -p $port del ot11:zew:gorillafeeding:{tickets}
+redis-cli -h $host -p $port del ot11:zew:3dmovie:{tickets}
+redis-cli -h $host -p $port del ot11:zew:snakefeeding:{tickets}
 
-redis-cli -h $host -p $port TS.CREATE zew:adult:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience adult
-redis-cli -h $host -p $port TS.CREATE zew:child:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience child
-redis-cli -h $host -p $port TS.CREATE zew:pettingzoo:{tickets} retention 0 LABELS data tickets attraction pettingzoo isfree false audience all
-redis-cli -h $host -p $port TS.CREATE zew:bonobolecture:{tickets} retention 0 LABELS data tickets attraction bonobolecture isfree false audience adult
-redis-cli -h $host -p $port TS.CREATE zew:gorillafeeding:{tickets} retention 0 LABELS data tickets attraction gorillafeeding isfree true audience all
-redis-cli -h $host -p $port TS.CREATE zew:3dmovie:{tickets} retention 0 LABELS data tickets attraction 3dmovie isfree false audience all
-redis-cli -h $host -p $port TS.CREATE zew:snakefeeding:{tickets} retention 0 LABELS data tickets attraction snakefeeding isfree true audience all
+redis-cli -h $host -p $port TS.CREATE ot11:zew:adult:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience adult author ot11
+redis-cli -h $host -p $port TS.CREATE ot11:zew:child:{tickets} retention 0 LABELS data tickets attraction entrance isfree false audience child author ot11
+redis-cli -h $host -p $port TS.CREATE ot11:zew:pettingzoo:{tickets} retention 0 LABELS data tickets attraction pettingzoo isfree false audience all author ot11
+redis-cli -h $host -p $port TS.CREATE ot11:zew:bonobolecture:{tickets} retention 0 LABELS data tickets attraction bonobolecture isfree false audience adult author ot11
+redis-cli -h $host -p $port TS.CREATE ot11:zew:gorillafeeding:{tickets} retention 0 LABELS data tickets attraction gorillafeeding isfree true audience all author ot11
+redis-cli -h $host -p $port TS.CREATE ot11:zew:3dmovie:{tickets} retention 0 LABELS data tickets attraction 3dmovie isfree false audience all author ot11
+redis-cli -h $host -p $port TS.CREATE ot11:zew:snakefeeding:{tickets} retention 0 LABELS data tickets attraction snakefeeding isfree true audience all author ot11
 
-redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,12) redis.call('TS.ADD', 'zew:adult:{tickets}', ((index*21200000)+season), (vall+(index%9)) ) end end" 1 {tickets}
-redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,22) redis.call('TS.ADD', 'zew:child:{tickets}', ((index*21200000)+season), (vall+(index%19)) ) end end" 1 {tickets}
-redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,9) redis.call('TS.ADD', 'zew:pettingzoo:{tickets}', ((index*21200000)+season), (vall+(index%4)) ) end end" 1 {tickets}
-redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,2) redis.call('TS.ADD', 'zew:bonobolecture:{tickets}', ((index*21200000)+season), (vall*(index%2)) ) end end" 1 {tickets}
-redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,4) redis.call('TS.ADD', 'zew:3dmovie:{tickets}', ((index*21200000)+season), (vall*(index%2)) ) end end" 1 {tickets}
-redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,30) redis.call('TS.ADD', 'zew:gorillafeeding:{tickets}', ((index*21200000)+season), (vall+(index%7)) ) end end" 1 {tickets}
-redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,30) redis.call('TS.ADD', 'zew:snakefeeding:{tickets}', ((index*(21200000*6))+season), (vall*(index%2)) ) end end" 1 {tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,12) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%9)) ) end end" 1 ot11:zew:adult:{tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,22) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%19)) ) end end" 1 ot11:zew:child:{tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,9) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%4)) ) end end" 1 ot11:zew:pettingzoo:{tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,2) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall*(index%2)) ) end end" 1 ot11:zew:bonobolecture:{tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,4) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall*(index%2)) ) end end" 1 ot11:zew:gorillafeeding:{tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,30) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%7)) ) end end" 1 ot11:zew:3dmovie:{tickets}
+redis-cli -h $host -p $port EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,30) redis.call('TS.ADD', KEYS[1], ((index*(21200000*6))+season), (vall*(index%2)) ) end end" 1 ot11:zew:snakefeeding:{tickets}
 ```
 * Upon execution you should see this output:
 ``` 

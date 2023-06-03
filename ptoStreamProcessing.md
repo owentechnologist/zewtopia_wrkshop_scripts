@@ -13,25 +13,25 @@
 ### Write the first SET of data:
 
 ```
-SADD dates{PTO} "2022-12-24" "2022-12-25" "2022-12-26" "2022-12-27" "2022-12-28" "2022-12-29" "2022-12-30" "2022-12-31"
+SADD dates{ot11} "2022-12-24" "2022-12-25" "2022-12-26" "2022-12-27" "2022-12-28" "2022-12-29" "2022-12-30" "2022-12-31"
 ```
 
 ### Write the second SET of data:
 
 ```
-SADD ids{PTO} 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+SADD ids{ot11} 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
 ```
 
 ### Create a worker group called ‘managers’  to process Stream events:
 
 ```
-XGROUP CREATE X:requests{PTO} managers 0 MKSTREAM
+XGROUP CREATE X:requests{ot11} managers 0 MKSTREAM
 ```
 
 ### Execute the following script 10 or more times:
 
 ``` 
-EVAL "local id = redis.call('SRANDMEMBER','ids{PTO}') local date = redis.call('SRANDMEMBER','dates{PTO}') redis.call('XADD','X:requests{PTO}','*','empid',id,'startDate',date, 'numDays',(id%5))" 1 {PTO}
+EVAL "local id = redis.call('SRANDMEMBER','ids'..KEYS[1]) local date = redis.call('SRANDMEMBER','dates'..KEYS[1]) redis.call('XADD','X:requests'..KEYS[1],'*','empid',id,'startDate',date, 'numDays',(id%5))" 1 {ot11}
 ```
 
 Now would be a good time to look at the information available in Redis Insight if you have it.
@@ -44,7 +44,7 @@ Now would be a good time to look at the information available in Redis Insight i
 (For some executions, change the last argument to manager2 or manager3 to show multiple workers)
 
 ``` 
-EVAL "local maxdays = 10 local msg = 'stuck during processing' local ptoRequest = redis.call('XREADGROUP','GROUP','managers',ARGV[1],'COUNT','1','STREAMS','X:requests{PTO}','>') local eventid = ptoRequest[1][2][1][1] local empid = ptoRequest[1][2][1][2][2] local startDate = ptoRequest[1][2][1][2][4] local days = ptoRequest[1][2][1][2][6] if (( days > '0' ) and redis.call('SISMEMBER','used{PTO}',empid)<1) then msg = 'PTO approved for '..days..' days' redis.call('XADD','X:results{PTO}','*','empid',empid,'startDate',startDate,'numDays',days,'manager',ARGV[1],'status','approved') redis.call('XACK','X:requests{PTO}','managers',eventid) redis.call('SADD','used{PTO}',empid) end return msg" 1 {PTO} manager1
+EVAL "local maxdays = 10 local msg = 'stuck during processing' local ptoRequest = redis.call('XREADGROUP','GROUP','managers',ARGV[1],'COUNT','1','STREAMS','X:requests'..KEYS[1],'>') local eventid = ptoRequest[1][2][1][1] local empid = ptoRequest[1][2][1][2][2] local startDate = ptoRequest[1][2][1][2][4] local days = ptoRequest[1][2][1][2][6] if (( days > '0' ) and redis.call('SISMEMBER','used'..KEYS[1],empid)<1) then msg = 'PTO approved for '..days..' days' redis.call('XADD','X:results'..KEYS[1],'*','empid',empid,'startDate',startDate,'numDays',days,'manager',ARGV[1],'status','approved') redis.call('XACK','X:requests'..KEYS[1],'managers',eventid) redis.call('SADD','used'..KEYS[1],empid) end return msg" 1 {ot11} manager1
 ```
 #### <em>NB: When there are no remaining messages to process you will see an error like this:</em>
 ``` 
@@ -56,7 +56,7 @@ EVAL "local maxdays = 10 local msg = 'stuck during processing' local ptoRequest 
 ### Execute the following script multiple times and check the information available in Redis Insight to see what the impact of all the above has been
 
 ``` 
-EVAL "local msg = 'abc' local stuckRequestID = redis.call('XPENDING','X:requests{PTO}','managers','-','+','1')[1][1] local ptoRequest = redis.call('XCLAIM','X:requests{PTO}','managers',ARGV[1],'0',stuckRequestID) local eventid = ptoRequest[1][1] local empid = ptoRequest[1][2][2] local startDate = ptoRequest[1][2][4] local days = ptoRequest[1][2][6] if (days < '1') then msg = 'request denied (PTO must be > 0 days)' end if redis.call('SISMEMBER','used{PTO}',empid)>0 then msg = 'request denied  employee '..empid..' already requested PTO' end redis.call('XADD','X:results{PTO}','*','empid',empid,'startDate',startDate,'numDays',days,'manager', ARGV[1], 'status', 'denied', 'reason',msg) redis.call('XACK','X:requests{PTO}','managers',eventid) return msg" 1 {PTO} supervisor
+EVAL "local msg = 'abc' local stuckRequestID = redis.call('XPENDING','X:requests'..KEYS[1],'managers','-','+','1')[1][1] local ptoRequest = redis.call('XCLAIM','X:requests'..KEYS[1],'managers',ARGV[1],'0',stuckRequestID) local eventid = ptoRequest[1][1] local empid = ptoRequest[1][2][2] local startDate = ptoRequest[1][2][4] local days = ptoRequest[1][2][6] if (days < '1') then msg = 'request denied (PTO must be > 0 days)' end if redis.call('SISMEMBER','used'..KEYS[1],empid)>0 then msg = 'request denied  employee '..empid..' already requested PTO' end redis.call('XADD','X:results'..KEYS[1],'*','empid',empid,'startDate',startDate,'numDays',days,'manager', ARGV[1], 'status', 'denied', 'reason',msg) redis.call('XACK','X:requests'..KEYS[1],'managers',eventid) return msg" 1 {ot11} supervisor
 ```
 #### <em>NB: When there are no remaining Pending messages to process, you will see an error like this:</em>
 ``` 

@@ -10,8 +10,9 @@ from redis.client import Pipeline
 # TODO: fix the host and port to match your redis database endpoint:
 redishost = '192.168.1.20'
 redispassword = '' #FIXME (if you are not using default user with no password)
-redisport = 12000
+redisport = 14787
 redisuser = 'default'  #FIXME (if you are not using default user with no password)
+numberofevents = 500
 
 # if not using TLS:
 myredis = redis.StrictRedis(redishost,redisport,password=redispassword, charset="utf-8", decode_responses=True)
@@ -49,7 +50,7 @@ except:
 # Have a single worker belonging to our group process 10 stream events
 # using the > character tells redis to only deliver events unprocessed by this group: 
 streamsdict = {'zew:{batch2}:revenue:stream': ">"}
-for x in range(25):
+for x in range(numberofevents):
     try:
         response = myredis.xreadgroup('group1','processorA',streams=streamsdict,count=1,noack=False)
         eventid = response[0][1][0][0] # the id assigned to the event when it was created
