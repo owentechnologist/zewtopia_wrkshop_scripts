@@ -4,10 +4,10 @@ This file contains useful 'zewtopia workshop' data loading efforts possible thro
 
 By copy-pasting the commands into RedisInsight V2 Workbench and executing the Play button - the data will be loaded into the connected Redis Database
 
-This is intended to make it easy for the lab exercises to be done by participants where having a suitable dataset for each exercise will  speed their progress
+This is intended to make it easy for the lab exercises to be done by participants where having a suitable dataset for each exercise will speed their progress
 
 Using this method is optional, and it's execution should normally be recommended by your instructor to avoid redundancy of effort and possible confusion
-(Some of the commands are only intended to be executes one time - while others can be done by each participant using a separate prefix and/or routing value)
+(Some of the commands are only intended to be executed one time - while others can be done by each participant using a separate prefix and/or routing value)
 
 * The following is the data population command to be copy-pasted and executed before the search sections:
 
