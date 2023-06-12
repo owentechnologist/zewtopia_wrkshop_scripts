@@ -15,7 +15,7 @@ Using this method is optional, and it's execution should normally be recommended
 EVAL "do redis.call('SADD',KEYS[1],'Lion') redis.call('SADD',KEYS[1],'Tiger') redis.call('SADD',KEYS[1],'Elephant') redis.call('SADD',KEYS[1],'Giant Panda') redis.call('SADD',KEYS[1],'Gorilla') redis.call('SADD',KEYS[1],'Giraffe') redis.call('SADD',KEYS[1],'Polar Bear') redis.call('SADD',KEYS[1],'Hippo') redis.call('SADD',KEYS[1],'Cheeta') redis.call('SADD',KEYS[1],'Zebra') redis.call('SADD',KEYS[1],'Meerkat') redis.call('SADD',KEYS[1],'Penguin') redis.call('SADD',KEYS[1],'Kangaroo') redis.call('SADD',KEYS[1],'Flamingo') redis.call('SADD',KEYS[1],'Koala') redis.call('SADD',KEYS[1],'Chimpanzee') redis.call('SADD',KEYS[1],'Llama') redis.call('SADD',KEYS[1],'Green Anaconda') redis.call('SADD',KEYS[1],'Hyena') redis.call('SADD',KEYS[1],'Bonobo') redis.call('SADD',KEYS[1],'Alligator') redis.call('SADD',KEYS[1],'Orangutan') end" 1 zew:{batch1}:species
 EVAL "do redis.call('SADD',KEYS[1],'chronic gastroenteritis') redis.call('SADD',KEYS[1],'acute gastroenteritis') redis.call('SADD',KEYS[1],'enteric parasites') redis.call('SADD',KEYS[1],'bite wound') redis.call('SADD',KEYS[1],'gore wound') redis.call('SADD',KEYS[1],'various lacerations') redis.call('SADD',KEYS[1],'bacterial abscess') redis.call('SADD',KEYS[1],'dystocia') redis.call('SADD',KEYS[1],'ingestion of foreign body') redis.call('SADD',KEYS[1],'osteoarthritis') redis.call('SADD',KEYS[1],'bacterial pneumonia') redis.call('SADD',KEYS[1],'tooth rot') redis.call('SADD',KEYS[1],'oral trauma') redis.call('SADD',KEYS[1],'digestive ulcer') redis.call('SADD',KEYS[1],'diabetis insipidus') end" 1 zew:{batch1}:disorders
 EVAL "do redis.call('SADD',KEYS[1],'Giggly') redis.call('SADD',KEYS[1],'Charmer') redis.call('SADD',KEYS[1],'Hungry') redis.call('SADD',KEYS[1],'Biter') redis.call('SADD',KEYS[1],'Noisy') redis.call('SADD',KEYS[1],'Chess') redis.call('SADD',KEYS[1],'Fluffy') redis.call('SADD',KEYS[1],'Logan') redis.call('SADD',KEYS[1],'Lover') redis.call('SADD',KEYS[1],'September') redis.call('SADD',KEYS[1],'Scrappy') redis.call('SADD',KEYS[1],'Juicy') redis.call('SADD',KEYS[1],'Lock') redis.call('SADD',KEYS[1],'Pat') redis.call('SADD',KEYS[1],'Roman') redis.call('SADD',KEYS[1],'Bobby') redis.call('SADD',KEYS[1],'Archer') redis.call('SADD',KEYS[1],'Hunter') redis.call('SADD',KEYS[1],'Cutsie') redis.call('SADD',KEYS[1],'Nasty') redis.call('SADD',KEYS[1],'Young') redis.call('SADD',KEYS[1],'Old') redis.call('SADD',KEYS[1],'Bashful') redis.call('SADD',KEYS[1],'Sweet') redis.call('SADD',KEYS[1],'Charity') redis.call('SADD',KEYS[1],'Rescue') redis.call('SADD',KEYS[1],'Glutten') redis.call('SADD',KEYS[1],'Brown') redis.call('SADD',KEYS[1],'Sam') redis.call('SADD',KEYS[1],'Red') redis.call('SADD',KEYS[1],'Blue') redis.call('SADD',KEYS[1],'Brooklyn') redis.call('SADD',KEYS[1],'California') redis.call('SADD',KEYS[1],'Paris') redis.call('SADD',KEYS[1],'Barrel') redis.call('SADD',KEYS[1],'Angel') redis.call('SADD',KEYS[1],'Devil') redis.call('SADD',KEYS[1],'Sleepy') redis.call('SADD',KEYS[1],'Sneezy') redis.call('SADD',KEYS[1],'Doc') end" 1 zew:{batch1}:names
-EVAL "for index = 1,3000 do local nums = '123456789' local alphs = redis.call('SRANDMEMBER', KEYS[4])..'aBcDeFgHiJkLmNoPqRsTuVwXyZ' local days = math.random(1,800) redis.call('HSET', KEYS[1] .. index,'species','' ..  redis.call('SRANDMEMBER', KEYS[2]),'name',redis.call('SRANDMEMBER', KEYS[4]) .. ' ' .. redis.call('SRANDMEMBER', KEYS[4]) ..' '.. index ,'gender', index %3 == 0 and 'male' or 'female' ,'known_disorders',index %3 == 0 and 'none reported' or redis.call('SRANDMEMBER', KEYS[3]),'days_in_zoo', days,'current_gps_location', '117.14'..math.random(800,1000).. ',32.73'.. math.random(0,900), 'dob',(redis.call('time')[1]-(days*(86400*math.random(1,8)))),'docid',index ..''.. math.random(1,800)..index .. string.sub(alphs,math.random(3,7),math.random(8,12)) .. math.random(1,800) .. '-41'.. math.random(1,800)..index .. string.sub(nums,math.random(1,4),math.random(5,9)) ..'-b749-'.. math.random(1,800)..index .. string.sub(alphs,math.random(4,9),math.random(10,14))) end" 4 zew:{batch1}:animal: zew:{batch1}:species zew:{batch1}:disorders zew:{batch1}:names
+EVAL "for index = ARGV[1],ARGV[2] do local nums = '123456789' local alphs = redis.call('SRANDMEMBER', KEYS[4])..'aBcDeFgHiJkLmNoPqRsTuVwXyZ' local days = math.random(1,800) redis.call('HSET', KEYS[1] .. index,'species','' ..  redis.call('SRANDMEMBER', KEYS[2]),'name',redis.call('SRANDMEMBER', KEYS[4]) .. ' ' .. redis.call('SRANDMEMBER', KEYS[4]) ..' '.. index ,'gender', index %3 == 0 and 'male' or 'female' ,'known_disorders',index %3 == 0 and 'none reported' or redis.call('SRANDMEMBER', KEYS[3]),'days_in_zoo', days,'current_gps_location', '117.14'..math.random(800,1000).. ',32.73'.. math.random(0,900), 'dob',(redis.call('time')[1]-(days*(86400*math.random(1,8)))),'docid',index ..''.. math.random(1,800)..index .. string.sub(alphs,math.random(3,7),math.random(8,12)) .. math.random(1,800) .. '-41'.. math.random(1,800)..index .. string.sub(nums,math.random(1,4),math.random(5,9)) ..'-b749-'.. math.random(1,800)..index .. string.sub(alphs,math.random(4,9),math.random(10,14))) end" 4 zew:{batch1}:animal: zew:{batch1}:species zew:{batch1}:disorders zew:{batch1}:names 1 3001
 HSET zew:tenure:new days_in_zoo_start 0 days_in_zoo_end 20 description 'Newly arrived animals have a tendency towards extreme behaviors and high-energy output' tenure_class 'NEW'
 HSET zew:tenure:settled days_in_zoo_start 21 days_in_zoo_end 300 description 'Settled animals form social bonds with others and begin adapting to the zoo environment' tenure_class 'SETTLED'
 HSET zew:tenure:enduring days_in_zoo_start 301 days_in_zoo_end 30000 description 'Enduring animals show signs of weariness and psychological distress, often accompanied by persistent physical health issues' tenure_class 'ENDURING'
@@ -137,4 +137,34 @@ EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do
 
 ```
 TS.MRANGE - + AGGREGATION SUM 86400000 FILTER data=tickets
+```
+
+***
+* this is a SQL query that shows the power of synonyms - works with SQLJDBC (trino)
+  
+  https://github.com/redis-field-engineering/redis-sql-trino
+``` 
+SELECT count(name) members,species,known_disorders from ot11_idx_zew where name like 'Fluffy Doc 10%' and known_disorders = 'injury' group by species,known_disorders;
+```
+And some results:
+```
+ members |  species   |   known_disorders   
+---------+------------+---------------------
+       1 | Lion       | gore wound          
+       1 | Cheeta     | gore wound          
+       1 | Giraffe    | bite wound          
+       1 | Chimpanzee | gore wound          
+       1 | Hyena      | oral trauma         
+       1 | Alligator  | oral trauma         
+       1 | Penguin    | various lacerations 
+       1 | Penguin    | oral trauma         
+       1 | Zebra      | bite wound          
+       1 | Giraffe    | oral trauma         
+       1 | Kangaroo   | gore wound          
+       2 | Llama      | oral trauma         
+(12 rows)
+
+Query 20230604_172228_00017_x5hk8, FINISHED, 1 node
+Splits: 17 total, 17 done (100.00%)
+0.21 [24 rows, 24B] [114 rows/s, 115B/s]
 ```

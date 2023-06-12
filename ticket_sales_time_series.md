@@ -60,7 +60,7 @@ TS.MRANGE - + AGGREGATION SUM 2628288000 FILTER data=tickets attraction!=(entran
 
 [link_to_documentation_for_redis_time_series](https://redis.io/commands/?group=timeseries)
 
-#This completes this look at Time-Series data
+# This completes this look at Time-Series data
 (You can stop reading this now)
 ***
 
