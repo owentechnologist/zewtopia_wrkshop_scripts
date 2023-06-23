@@ -19,17 +19,7 @@ TS.ADD securedocsloaded 1625613600981 13
 TS.ADD securedocsloaded 1625613603521 92
 ```
 
-| Common labels:    datarealm doc_activities bu accounting region centralUS | |
-| -------------- | -------------- | -------------- | -------------- |
-| TSkeyname: securedocsread       | TSkeyname: securedocsloaded | |
-| -------- | -------- | -------- | -------- |
-| TS | value | TS | value |
-| -------- | -------- | -------- | -------- |
-| 1625613600000   | 12   | 1625613600004 | 2 |
-| 1625613600032   | 3 | 1625613600365 | 8 |
-| 1625613600124   | 223 | 1625613600981 | 13 |
-| 1625613600554   | 2 | 1625613603521 | 92 |
-
+![securedicsread](./timeseriesascolumns.png)
 
 This allows you to query the individual keys using TS.RANGE:
 ```
