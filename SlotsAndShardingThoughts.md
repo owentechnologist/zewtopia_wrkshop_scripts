@@ -249,6 +249,9 @@ in this example - result of SCRIPT LOAD Is ```"3624b7980adc18c24708839669e203a8a
 (empty list or set)
 ```
 
+#### On a related note: there is a python utility that can help to ascertain which slots a particular key goes to:
 
+
+https://github.com/Redislabs-Solution-Architects/keyslot 
 
 
