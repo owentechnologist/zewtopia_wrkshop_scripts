@@ -1,5 +1,5 @@
 ### This series of commands showcases the use of Redis Streams -- including the Claiming of Pending events that have been given to members of a worker group
-
+![pto](ptoStreamsExample.png)
 #### 1. Establish two sets of data that will be used in our simple example:
 * A SET of dates
 * A SET of employee Ids
