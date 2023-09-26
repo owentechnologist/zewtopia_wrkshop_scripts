@@ -254,4 +254,22 @@ in this example - result of SCRIPT LOAD Is ```"3624b7980adc18c24708839669e203a8a
 
 https://github.com/Redislabs-Solution-Architects/keyslot 
 
+A more verbose version of the LUA script for unlinking which contains instructions for what to do next follows. (assuming your intent is a complete removal of all keys with a certain prefix)
+
+``` 
+script load "local index = ARGV[1] local prefix = ARGV[2] local count = ARGV[3] local unlinked = 0 local xtramsg = '      Make sure to use the same routing value: '..KEYS[1]..'   - Thanks!' local scanResults = redis.call('SCAN',index,'MATCH',prefix,'COUNT',count) if #{scanResults[2][1]} > 0 then local innerLoop = 1 while #{scanResults[2][innerLoop]} > 0 do redis.call('UNLINK',scanResults[2][innerLoop]) innerLoop=(innerLoop+1) unlinked=(unlinked+1)end end if scanResults[1]=='0' then xtramsg = ' ALSO: You have exhausted that shard of all matching keys for the prefix '..prefix..'. Choose a new prefix or routing value. (The number between the {} used as the second argument is the routing value) ' end return 'unlinked '..unlinked..' keys! Use this # as your next scan index Argument (the third argument you provide to this script): '..scanResults[1]..xtramsg "
+```
+
+Here's what some executions of this more verbose version look like:
+
+``` 
+> evalsha c20ae0de90e38c6160e6fc61771226d37a649847 1 {1} 80 json* 100
+"unlinked 1 keys! Use this # as your next scan index Argument (the third argument you provide to this script): 241      Make sure to use the same routing value: {1}   - Thanks!"
+
+> evalsha c20ae0de90e38c6160e6fc61771226d37a649847 1 {1} 241 json* 500
+"unlinked 1 keys! Use this # as your next scan index Argument (the third argument you provide to this script): 0 ALSO: You have exhausted that shard of all matching keys for the prefix json*. Choose a new prefix or routing value. (The number between the {} used as the second argument is the routing value) "
+
+> evalsha c20ae0de90e38c6160e6fc61771226d37a649847 1 {2} 0 json* 500
+"unlinked 2 keys! Use this # as your next scan index Argument (the third argument you provide to this script): 0 ALSO: You have exhausted that shard of all matching keys for the prefix json*. Choose a new prefix or routing value. (The number between the {} used as the second argument is the routing value) "
+```
 
