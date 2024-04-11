@@ -22,12 +22,12 @@ TS.CREATE ot11:zew:snakefeeding:{tickets} retention 0 LABELS data tickets attrac
 ```
 ## For each of the following LUA script executions provide the key-name with your prefix as the 1st key-name argument
 ```
-EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,12) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%9)) ) end end" 1 ot11:zew:adult:{tickets}
-EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,22) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%19)) ) end end" 1 ot11:zew:child:{tickets}
-EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,9) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%4)) ) end end" 1 ot11:zew:pettingzoo:{tickets}
-EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,2) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall*(index%2)) ) end end" 1 ot11:zew:bonobolecture:{tickets}
-EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,4) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall*(index%2)) ) end end" 1 ot11:zew:3dmovie:{tickets}
-EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,365 do local vall = math.random(0,30) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%7)) ) end end" 1 ot11:zew:gorillafeeding:{tickets}
+EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,12) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%9)) ) end end" 1 ot11:zew:adult:{tickets}
+EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,22) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%19)) ) end end" 1 ot11:zew:child:{tickets}
+EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,9) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%4)) ) end end" 1 ot11:zew:pettingzoo:{tickets}
+EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,2) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall*(index%2)) ) end end" 1 ot11:zew:bonobolecture:{tickets}
+EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,4) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall*(index%2)) ) end end" 1 ot11:zew:3dmovie:{tickets}
+EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,30) redis.call('TS.ADD', KEYS[1], ((index*21200000)+season), (vall+(index%7)) ) end end" 1 ot11:zew:gorillafeeding:{tickets}
 EVAL "for season = 1605525600000,1625613600000,2600000000 do for index = 1,60 do local vall = math.random(0,30) redis.call('TS.ADD', KEYS[1], ((index*(21200000*6))+season), (vall*(index%2)) ) end end" 1 ot11:zew:snakefeeding:{tickets}
 ```
 
