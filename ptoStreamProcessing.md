@@ -39,7 +39,7 @@ Now would be a good time to look at the information available in Redis Insight i
 * Can you find the ‘managers’ worker Group?
 * Are any messages in a ‘Pending’ state?
 
-### Now, Let's act as workers in our 'managers' worker groyp
+### Now, Let's act as workers in our 'managers' worker group
 ### Execute the following script 10 or more times:
 (For some executions, change the last argument to manager2 or manager3 to show multiple workers)
 
